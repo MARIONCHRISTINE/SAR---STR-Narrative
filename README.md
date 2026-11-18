@@ -16,7 +16,9 @@ For each statement (e.g. `Subs1.xlsx`) the script creates `Output\Subs1\` with:
    ```bash
    pip install -r requirements.txt
    ```
-3. Put the Word template `CUSTOMER PROFILE sample.docx` in the same folder as the script. It is not stored in this repository because it holds customer data. Any `.docx` with the same headings and bullets works; the script copies its formatting and replaces the values.
+3. That's it. The Word template is included at `template\CUSTOMER PROFILE sample.docx` (placeholders only, no customer data). The `Output` and `Processed` folders are created automatically.
+
+To change the report's look, edit that template in Word. You can also put your own `CUSTOMER PROFILE sample.docx` next to the script; it takes priority over the one in `template\`. The script copies the template's formatting and replaces only the values.
 
 ## Daily use
 
@@ -38,4 +40,4 @@ At the top of `str_narratives.py`: `SHOW_CENTS`, `REPORT_NAME`, `KYC_STATUS`, `O
 
 ## Data protection
 
-`.gitignore` blocks `.xlsx`, `.docx`, `Output\` and `Processed\` so customer statements and reports are never committed. Keep it that way.
+`.gitignore` blocks `.xlsx`, `.docx`, `Output\` and `Processed\` so customer statements and reports are never committed. The only exception is the blank template in `template\`. Never put real customer details into that file.

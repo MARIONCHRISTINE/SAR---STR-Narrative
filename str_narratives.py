@@ -45,7 +45,7 @@ OUTPUT_COLUMN = "AA"          # where the narrative goes
 OUTPUT_HEADER = "NARRATIVE"
 OUTPUT_FOLDER = "Output"      # results go to Output\<statement name>\
 PROCESSED_FOLDER = "Processed"  # finished statements are moved here ("" = leave them in place)
-TEMPLATE_FILE = "CUSTOMER PROFILE sample.docx"   # Word template, kept next to this script
+TEMPLATE_FILE = "CUSTOMER PROFILE sample.docx"   # Word template: next to this script, else template\ folder
 REPORT_NAME = "AML-2026-.docx"                   # add the case number manually after 2026-
 KYC_STATUS = "Complete"
 OCCUPATION_PLACEHOLDER = "OCCUPATION"            # filled in manually
@@ -361,9 +361,12 @@ def main():
         print(f"No new statements to process in {where}.\n"
               f"Put the .xlsx statements in that folder and run the script again.")
         return
-    template = Path(__file__).resolve().parent / TEMPLATE_FILE
+    here = Path(__file__).resolve().parent
+    template = here / TEMPLATE_FILE                     # your own template, if you keep one here
     if not template.exists():
-        print(f"WARNING: Word template '{TEMPLATE_FILE}' not found next to the script - "
+        template = here / "template" / TEMPLATE_FILE    # blank template shipped with the repo
+    if not template.exists():
+        print(f"WARNING: Word template '{TEMPLATE_FILE}' not found - "
               f"only the Excel files will be produced.")
     ok = failed = 0
     for src in files:
