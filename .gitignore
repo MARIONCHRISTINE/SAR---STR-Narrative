@@ -1,0 +1,17 @@
+# Customer data must never be committed (statements, reports, outputs)
+*.xlsx
+*.xls
+*.csv
+*.docx
+*.doc
+*.pdf
+Output/
+Processed/
+~$*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.vscode/
