@@ -36,11 +36,19 @@ from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
-from docx import Document
-from openpyxl import load_workbook
-from openpyxl.styles import Alignment
-from openpyxl.utils import column_index_from_string, get_column_letter, range_boundaries
-from openpyxl.worksheet.table import TableColumn
+try:
+    from docx import Document
+    from openpyxl import load_workbook
+    from openpyxl.styles import Alignment
+    from openpyxl.utils import column_index_from_string, get_column_letter, range_boundaries
+    from openpyxl.worksheet.table import TableColumn
+except ModuleNotFoundError as missing:
+    package = {"docx": "python-docx"}.get(missing.name, missing.name)
+    sys.exit(
+        f"\nMissing library: {package}\n"
+        f"Install the libraries this script needs by running this command, then try again:\n\n"
+        f'    "{sys.executable}" -m pip install openpyxl python-docx\n'
+    )
 
 # ---------------------------------------------------------------- settings
 OUTPUT_COLUMN = "AA"          # where the narrative goes
