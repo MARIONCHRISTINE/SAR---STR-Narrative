@@ -39,6 +39,8 @@ from pathlib import Path
 from docx import Document
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
+from openpyxl.utils import column_index_from_string, get_column_letter, range_boundaries
+from openpyxl.worksheet.table import TableColumn
 
 # ---------------------------------------------------------------- settings
 OUTPUT_COLUMN = "AA"          # where the narrative goes
@@ -293,6 +295,25 @@ def write_case_report(template: Path, dest: Path, info):
 
 
 # ---------------------------------------------------------------- workbook handling
+def include_narrative_in_table(ws):
+    """Statements come as an Excel Table (A:Z). Stretch it (and any filter) to cover the
+    narrative column, so sorting/filtering moves the narrative together with its row."""
+    out_idx = column_index_from_string(OUTPUT_COLUMN)
+    for table in ws.tables.values():
+        min_col, min_row, max_col, max_row = range_boundaries(table.ref)
+        if max_col >= out_idx or max_col != out_idx - 1:
+            continue                      # already includes AA, or is not next to it
+        table.ref = f"{get_column_letter(min_col)}{min_row}:{OUTPUT_COLUMN}{max_row}"
+        if table.autoFilter is not None:
+            table.autoFilter.ref = table.ref
+        next_id = max(c.id for c in table.tableColumns) + 1
+        table.tableColumns.append(TableColumn(id=next_id, name=OUTPUT_HEADER))
+    if ws.auto_filter.ref:
+        min_col, min_row, max_col, max_row = range_boundaries(ws.auto_filter.ref)
+        if max_col == out_idx - 1:
+            ws.auto_filter.ref = f"{get_column_letter(min_col)}{min_row}:{OUTPUT_COLUMN}{max_row}"
+
+
 def process_file(src: Path, out_dir: Path, template: Path):
     wb = load_workbook(src)
     ws = wb.worksheets[0]
@@ -317,6 +338,7 @@ def process_file(src: Path, out_dir: Path, template: Path):
         cell.alignment = wrap
         done += 1
 
+    include_narrative_in_table(ws)
     out_dir.mkdir(parents=True, exist_ok=True)
     wb.save(out_dir / src.name)
 
